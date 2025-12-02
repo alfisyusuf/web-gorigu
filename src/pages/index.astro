@@ -1,16 +1,42 @@
 ---
+// --- Bagian Server (JavaScript) ---
+// Kita panggil client Sanity yang sudah kita setup tadi
+import { sanityClient } from "sanity:client";
 
+// Kita minta data ke Sanity.
+// Query ini artinya: "Ambil semua data yang tipenya 'post'"
+// Jika Anda belum punya schema 'post', nanti hasilnya array kosong [] (tidak error).
+const posts = await sanityClient.fetch(`*[_type == "post"]`);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Gorigu Web</title>
+  </head>
+  <body>
+    <div style="padding: 2rem; font-family: sans-serif;">
+      <h1>Selamat Datang di Gorigu</h1>
+      <p>Data di bawah ini diambil langsung dari Sanity CMS:</p>
+
+      {posts.length === 0 ? (
+        // Jika data kosong
+        <div style="background: #eee; padding: 1rem; border-radius: 8px;">
+          <p>⚠️ <strong>Belum ada konten.</strong></p>
+          <p>Sepertinya Anda belum membuat data 'post' di Sanity Studio, atau schema-nya berbeda.</p>
+        </div>
+      ) : (
+        // Jika data ada, kita looping (ulang) untuk setiap post
+        <ul>
+          {posts.map((post: any) => (
+            <li>
+              {/* Kita coba tampilkan judul. Jika fieldnya bukan 'title', ganti sesuaikan */}
+              <h3>{post.title || "Tanpa Judul"}</h3>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </body>
 </html>
