@@ -6,6 +6,7 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
+  output: 'server',
   integrations: [
     sanity({
       projectId: '0rudm0te', // <-- Ganti ini dengan Project ID Gorigu

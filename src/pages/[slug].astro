@@ -1,0 +1,126 @@
+---
+// --- SERVER SIDE (Berjalan di Server Cloudflare) ---
+import { sanityClient } from "sanity:client";
+
+// 1. Tangkap "slug" dari URL browser
+const { slug } = Astro.params;
+
+// 2. Jika tidak ada slug, kembalikan 404
+if (!slug) return Astro.redirect("/404");
+
+// 3. Ambil data Pengantin dari Sanity secara Real-time
+// Kita ambil field yang diperlukan saja biar ringan
+const data = await sanityClient.fetch(
+  `*[_type == "wedding" && slug.current == $slug][0]{
+    priaNickname,
+    wanitaNickname,
+    akadDate,
+    akadPlace,
+    resepsiDate,
+    resepsiPlace,
+    music, 
+    theme
+  }`,
+  { slug }
+);
+
+// 4. Jika data tidak ditemukan di Sanity (Salah link), error 404
+if (!data) return new Response(null, {
+  status: 404,
+  statusText: 'Not found'
+});
+
+// --- FORMAT TANGGAL BIAR CANTIK ---
+const tanggalAkad = new Date(data.akadDate).toLocaleDateString('id-ID', {
+  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+});
+---
+
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>The Wedding of {data.priaNickname} & {data.wanitaNickname}</title>
+    
+    <style>
+      body { margin: 0; font-family: 'Times New Roman', serif; background: #f0f0f0; }
+      .container { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+      
+      /* Layar Pembuka (Amplop) */
+      #cover {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: #333; color: white; z-index: 99;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        transition: transform 0.8s ease-in-out;
+      }
+      #cover.open { transform: translateY(-100%); } /* Animasi geser ke atas */
+      
+      .btn-buka {
+        background: white; color: black; padding: 12px 24px; 
+        border-radius: 50px; border: none; font-weight: bold; cursor: pointer; margin-top: 20px;
+        box-shadow: 0 4px 10px rgba(255,255,255,0.3);
+      }
+    </style>
+  </head>
+  <body>
+
+    <audio id="bg-music" loop>
+      <source src={`/music/${data.music || 'default.mp3'}`} type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+      
+      <div id="cover">
+        <p style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.8rem;">The Wedding of</p>
+        <h1 style="font-size: 3rem; margin: 10px 0;">{data.priaNickname} & {data.wanitaNickname}</h1>
+        
+        <div style="margin-top: 2rem; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; width: 80%;">
+          <p style="font-size: 0.8rem; margin:0;">Kepada Yth:</p>
+          <h3 id="nama-tamu-cover" style="margin: 5px 0 0 0; font-size: 1.2rem;">Tamu Spesial</h3>
+        </div>
+
+        <button class="btn-buka" onclick="bukaUndangan()">💌 Buka Undangan</button>
+      </div>
+
+      <div style="padding: 40px 20px; text-align: center;">
+        <p>Dengan memohon Rahmat Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami:</p>
+        
+        <h2 style="font-size: 2.5rem; color: #555; margin: 30px 0;">
+          {data.priaNickname} <br> <span style="font-size: 1rem;">&</span> <br> {data.wanitaNickname}
+        </h2>
+
+        <div style="background: #fafafa; padding: 20px; border: 1px dashed #ccc; margin-top: 30px;">
+          <h3>Akad Nikah</h3>
+          <p>📅 {tanggalAkad}</p>
+          <p>📍 {data.akadPlace}</p>
+        </div>
+
+        <p style="margin-top: 50px; font-size: 0.8rem; color: #888;">
+          Musik: {data.music}
+        </p>
+      </div>
+
+    </div>
+
+    <script is:inline>
+      // 1. Logic Nama Tamu (Ambil dari ?tamu=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      const tamu = urlParams.get('tamu');
+      if (tamu) {
+        document.getElementById('nama-tamu-cover').innerText = tamu;
+      }
+
+      // 2. Logic Buka Undangan & Putar Musik
+      function bukaUndangan() {
+        // Geser layar cover ke atas
+        document.getElementById('cover').classList.add('open');
+        
+        // Putar musik (Browser mengizinkan play karena ada interaksi klik)
+        const audio = document.getElementById('bg-music');
+        audio.play().catch(error => {
+          console.log("Musik gagal putar otomatis (biasanya settingan browser):", error);
+        });
+      }
+    </script>
+  </body>
+</html>

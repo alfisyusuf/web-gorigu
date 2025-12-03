@@ -43,10 +43,16 @@ export default defineType({
     }),
     defineField({
       name: 'music',
-      title: 'Musik Latar (MP3)',
-      type: 'file',
-      options: { accept: 'audio/mp3' },
-      group: 'pengaturan',
+      title: 'Pilih Musik Latar',
+      type: 'string', // Ubah dari 'file' jadi 'string'
+      description: 'Pastikan file mp3 sudah ada di folder public/music proyek Astro',
+      options: {
+        list: [
+          // Buat daftar lagu yang sudah Anda siapkan di folder public
+          { title: 'Cinematic Wedding Inspiring and Uplifting (Default)', value: 'lagu1.mp3' },
+          { title: 'Beautiful Emotional Cinematic Wedding', value: 'lagu2.mp3' },
+        ],
+      },
     }),
     defineField({
       name: 'quote',
