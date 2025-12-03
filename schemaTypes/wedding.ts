@@ -238,4 +238,24 @@ export default defineType({
       group: 'kado',
     }),
   ],
+
+  preview: {
+    select: {
+      pria: 'priaNickname',
+      wanita: 'wanitaNickname',
+      foto: 'priaFoto', // Kita pakai foto pria sebagai thumbnail
+      slug: 'slug.current'
+    },
+    prepare(selection) {
+      const { pria, wanita, foto, slug } = selection
+      // Jika nama belum diisi, pakai placeholder
+      const title = pria && wanita ? `${pria} & ${wanita}` : 'Draft Undangan Baru';
+      
+      return {
+        title: title,       // Judul Besar (Contoh: Andi & Siti)
+        subtitle: slug ? `🔗 /${slug}` : 'Belum ada link', // Judul Kecil (Link)
+        media: foto         // Foto Thumbnail
+      }
+    }
+  }
 })
