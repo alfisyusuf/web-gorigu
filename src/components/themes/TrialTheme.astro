@@ -3,105 +3,64 @@ import { urlFor } from "../../utils/image";
 
 const { data } = Astro.props;
 
-// --- LOGIC (Sama dengan SimpleTheme) ---
+// Logic Data
 const isPriaFirst = data.nameOrder !== 'wanitaFirst';
 const namaPertama = isPriaFirst ? data.priaNickname : data.wanitaNickname;
 const namaKedua = isPriaFirst ? data.wanitaNickname : data.priaNickname;
 const tanggalAkad = new Date(data.akadDate).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-// Ambil URL Cover (Pakai placeholder kalau kosong biar gak error)
+// Ambil URL Gambar
 const coverUrl = data.coverImage 
   ? urlFor(data.coverImage).width(800).height(1200).url() 
-  : 'https://placehold.co/800x1200/333/fff?text=Upload+Cover+Dulu';
+  : 'https://placehold.co/800x1200/333/fff?text=Upload+Cover';
+
+// Kita siapkan string CSS untuk background di sini biar HTML bersih
+// Perhatikan: Kita pakai 'linear-gradient' ditumpuk dengan 'url' gambar
+const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${coverUrl}');`;
 ---
 
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trial: {namaPertama} & {namaKedua}</title>
+    <title>Wedding of {namaPertama} & {namaKedua}</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
     
-    <style define:vars={{ coverUrl }}>
-        body { margin: 0; font-family: 'Poppins', sans-serif; overflow: hidden; /* Biar gak bisa scroll dulu */ }
+    <style>
+        body { margin: 0; font-family: 'Poppins', sans-serif; overflow: hidden; background-color: #333; /* Default gelap */ }
         
-        /* COVER AREA (Full Layar) */
         .cover-screen {
             height: 100vh;
             width: 100%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;
             
-            /* Background Image dengan Overlay Gelap */
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url(var(--coverUrl));
+            /* Setting agar gambar pas di tengah */
             background-size: cover;
             background-position: center;
         }
 
-        .the-wedding { text-transform: uppercase; letter-spacing: 3px; font-size: 0.9rem; margin-bottom: 10px; opacity: 0.9; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; margin: 0; line-height: 1.2; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .guest-box { margin-top: 40px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(5px); padding: 15px 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); }
+        .btn-open { margin-top: 30px; background: white; color: #333; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         
-        h1 { 
-            font-family: 'Playfair Display', serif; 
-            font-size: 3.5rem; 
-            margin: 0; 
-            line-height: 1.2;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-        }
-        
-        .tanggal { margin-top: 10px; font-weight: 300; font-size: 1rem; }
-
-        /* KOTAK TAMU (KEPADA) */
-        .guest-box {
-            margin-top: 40px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            padding: 15px 30px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.3);
-            width: 80%;
-            max-width: 300px;
-        }
-        
-        /* TOMBOL BUKA */
-        .btn-open {
-            margin-top: 30px;
-            background: white;
-            color: #333;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .btn-open:hover { transform: scale(1.05); }
-
-        /* COUNTDOWN SEDERHANA */
+        /* Countdown */
         .countdown-box { display: flex; gap: 15px; margin-top: 30px; }
         .cd-item { text-align: center; }
-        .cd-num { font-size: 1.5rem; font-weight: bold; display: block; }
+        .cd-num { font-size: 1.5rem; font-weight: bold; }
         .cd-label { font-size: 0.6rem; text-transform: uppercase; }
-        
-        /* Isi Konten (Disembunyikan dulu untuk Trial Cover) */
+
         #main-content { display: none; background: white; color: black; padding: 50px 20px; text-align: center; min-height: 100vh;}
     </style>
 </head>
 <body>
 
-    <div class="cover-screen" id="cover">
-        <p class="the-wedding">The Wedding Of</p>
+    <div class="cover-screen" id="cover" style={backgroundStyle}>
+        
+        <p style="letter-spacing: 3px; font-size: 0.9rem; margin-bottom: 10px; opacity: 0.9;">THE WEDDING OF</p>
         
         <h1>{namaPertama} <br> <span style="font-size: 2rem; font-style: italic;">&</span> <br> {namaKedua}</h1>
         
-        <p class="tanggal">{tanggalAkad}</p>
+        <p style="margin-top: 10px; font-weight: 300;">{tanggalAkad}</p>
 
         <div class="countdown-box" id="countdown">
             <div class="cd-item"><span class="cd-num" id="d">0</span><span class="cd-label">Hari</span></div>
@@ -121,10 +80,8 @@ const coverUrl = data.coverImage
     </div>
 
     <div id="main-content">
-        <h2>Terima Kasih Telah Membuka</h2>
-        <p>Isi undangan lengkap akan muncul di sini.</p>
-        <br>
-        <p>{data.akadPlace}</p>
+        <h2>Terima Kasih</h2>
+        <p>Anda telah membuka undangan ini.</p>
     </div>
 
     <audio id="bg-music" loop>
@@ -132,38 +89,28 @@ const coverUrl = data.coverImage
     </audio>
 
     <script is:inline define:vars={{ targetDate: data.akadDate }}>
-        // 1. Logic Nama Tamu
+        // Logic Countdown & Nama Tamu (Sama seperti sebelumnya)
         const params = new URLSearchParams(window.location.search);
         const tamu = params.get('tamu');
         if(tamu) document.getElementById('nama-tamu').innerText = tamu;
 
-        // 2. Logic Buka Undangan
         function bukaUndangan() {
-            // Sembunyikan cover (atau geser ke atas)
             document.getElementById('cover').style.display = 'none';
-            // Tampilkan konten
             document.getElementById('main-content').style.display = 'block';
-            document.body.style.overflow = 'auto'; // Izinkan scroll
-            
-            // Putar Musik
-            const audio = document.getElementById('bg-music');
-            audio.play().catch(e => console.log("Gagal putar musik:", e));
+            document.body.style.overflow = 'auto';
+            document.getElementById('bg-music').play().catch(e => console.log(e));
         }
 
-        // 3. Logic Countdown
         const countDownDate = new Date(targetDate).getTime();
-        const x = setInterval(function() {
+        setInterval(function() {
             const now = new Date().getTime();
             const distance = countDownDate - now;
-            if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "<div>ACARA SUDAH DIMULAI</div>";
-                return;
+            if (distance >= 0) {
+                document.getElementById("d").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+                document.getElementById("h").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                document.getElementById("m").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById("s").innerText = Math.floor((distance % (1000 * 60)) / 1000);
             }
-            document.getElementById("d").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
-            document.getElementById("h").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            document.getElementById("m").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            document.getElementById("s").innerText = Math.floor((distance % (1000 * 60)) / 1000);
         }, 1000);
     </script>
 </body>
