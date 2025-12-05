@@ -34,7 +34,7 @@ export default defineType({
           { title: 'Jawa Klasik (Cokelat)', value: 'jawa' },
           { title: 'Rustic Modern (Cokelat)', value: 'rustic' },
           { title: 'Elegant Floral (Bunga)', value: 'floral' },
-          { title: 'Minimalis (Hitam Putih)', value: 'minimal' },
+          { title: 'Trial / Percobaan', value: 'trial' },
         ],
       },
       initialValue: 'simple',

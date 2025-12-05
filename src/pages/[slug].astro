@@ -2,6 +2,7 @@
 import { sanityClient } from "sanity:client";
 import SimpleTheme from '../components/themes/SimpleTheme.astro';
 import RusticTheme from '../components/themes/RusticTheme.astro';
+import TrialTheme from '../components/themes/TrialTheme.astro';
 
 // 1. Ambil slug dari URL
 const { slug } = Astro.params;
@@ -33,12 +34,10 @@ let SelectedTheme;
 
 if (data.theme === 'rustic') {
   SelectedTheme = RusticTheme;
-} else if (data.theme === 'jawa') {
-  // Sementara kita arahkan Jawa ke Rustic dulu (karena struktur mirip) 
-  // atau Anda bisa buat JawaTheme.astro nanti
-  SelectedTheme = RusticTheme; 
+} else if (data.theme === 'trial') {
+  // Tambahkan logika ini
+  SelectedTheme = TrialTheme;
 } else {
-  // Default: Simple / Minimalis / Floral
   SelectedTheme = SimpleTheme;
 }
 ---
