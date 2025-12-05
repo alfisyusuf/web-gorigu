@@ -4,19 +4,21 @@ export default defineType({
   name: 'wedding',
   title: 'Undangan Pernikahan',
   type: 'document',
+  // Ini untuk membuat Tab-Tab di atas form agar tidak pusing scroll ke bawah
   groups: [
-    { name: 'pengaturan', title: '⚙️ Pengaturan' },
-    { name: 'mempelai', title: '👰🤵 Mempelai' },
-    { name: 'acara', title: '📅 Acara' },
-    { name: 'galeri', title: '📷 Galeri' },
-    { name: 'kado', title: '🎁 Kado' },
+    { name: 'pengaturan', title: '⚙️ Pengaturan Tema' },
+    { name: 'mempelai', title: '👰🤵 Data Mempelai' },
+    { name: 'acara', title: '📅 Waktu & Lokasi' },
+    { name: 'galeri', title: '📷 Galeri & Cerita' },
+    { name: 'kado', title: '🎁 Kado Digital' },
   ],
   fields: [
-    // --- GROUP 1: PENGATURAN ---
+    // --- GROUP 1: PENGATURAN TEMA & URL ---
     defineField({
       name: 'slug',
       title: 'Link Undangan (URL)',
       type: 'slug',
+      description: 'Contoh: andi-siti. Nanti linknya jadi web-anda.com/andi-siti',
       options: {
         source: (doc: any) => `${doc.priaNickname}-${doc.wanitaNickname}`,
         maxLength: 96,
@@ -30,50 +32,27 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Simple Elegant (Putih)', value: 'simple' },
           { title: 'Jawa Klasik (Cokelat)', value: 'jawa' },
-          { title: 'Rustic Modern (Cokelat)', value: 'rustic' },
+          { title: 'Rustic Modern (Kayu/Putih)', value: 'rustic' },
           { title: 'Elegant Floral (Bunga)', value: 'floral' },
           { title: 'Minimalis (Hitam Putih)', value: 'minimal' },
         ],
       },
-      initialValue: 'simple',
-      group: 'pengaturan',
-    }),
-    defineField({
-      name: 'nameOrder',
-      title: 'Urutan Tampilan Nama',
-      type: 'string',
-      description: 'Siapa yang namanya muncul duluan di undangan?',
-      options: {
-        list: [
-          { title: 'Pria Dahulu (Andi & Siti)', value: 'priaFirst' },
-          { title: 'Wanita Dahulu (Siti & Andi)', value: 'wanitaFirst' },
-        ],
-      },
-      initialValue: 'priaFirst',
-      group: 'pengaturan',
-    }),
-    defineField({
-      name: 'coverImage',
-      title: 'Foto Cover Utama (Background)',
-      type: 'image',
-      description: 'Foto untuk background overlay di halaman pembuka.',
-      options: { hotspot: true },
+      initialValue: 'rustic',
       group: 'pengaturan',
     }),
     defineField({
       name: 'music',
       title: 'Pilih Musik Latar',
-      type: 'string',
-      description: 'File MP3 harus ada di folder public/music proyek Astro',
+      type: 'string', // Ubah dari 'file' jadi 'string'
+      description: 'Pastikan file mp3 sudah ada di folder public/music proyek Astro',
       options: {
         list: [
+          // Buat daftar lagu yang sudah Anda siapkan di folder public
           { title: 'Cinematic Wedding Inspiring and Uplifting (Default)', value: 'lagu1.mp3' },
           { title: 'Beautiful Emotional Cinematic Wedding', value: 'lagu2.mp3' },
         ],
       },
-      group: 'pengaturan',
     }),
     defineField({
       name: 'quote',
@@ -85,6 +64,7 @@ export default defineType({
     }),
 
     // --- GROUP 2: DATA MEMPELAI ---
+    // Mempelai Pria
     defineField({
       name: 'priaName',
       title: 'Nama Lengkap Pria',
@@ -99,7 +79,7 @@ export default defineType({
     }),
     defineField({
       name: 'priaParents',
-      title: 'Orang Tua Pria',
+      title: 'Nama Orang Tua Pria',
       type: 'string',
       description: 'Putra dari Bpk... & Ibu...',
       group: 'mempelai',
@@ -118,6 +98,7 @@ export default defineType({
       group: 'mempelai',
     }),
 
+    // Mempelai Wanita
     defineField({
       name: 'wanitaName',
       title: 'Nama Lengkap Wanita',
@@ -132,7 +113,7 @@ export default defineType({
     }),
     defineField({
       name: 'wanitaParents',
-      title: 'Orang Tua Wanita',
+      title: 'Nama Orang Tua Wanita',
       type: 'string',
       description: 'Putri dari Bpk... & Ibu...',
       group: 'mempelai',
@@ -152,25 +133,18 @@ export default defineType({
     }),
 
     // --- GROUP 3: ACARA ---
-    // Akad
+    // Akad / Pemberkatan
     defineField({
       name: 'akadDate',
-      title: 'Tanggal & Jam Akad',
+      title: 'Waktu Akad/Pemberkatan',
       type: 'datetime',
-      group: 'acara',
-    }),
-    defineField({
-      name: 'akadTimeManual',
-      title: 'Jam Akad Manual (Opsional)',
-      type: 'string',
-      placeholder: '08.00 WIB - Selesai',
-      description: 'Isi ini jika ingin menimpa format jam otomatis.',
       group: 'acara',
     }),
     defineField({
       name: 'akadPlace',
       title: 'Lokasi Akad',
       type: 'string',
+      description: 'Nama Masjid / Gereja / Gedung',
       group: 'acara',
     }),
     defineField({
@@ -190,15 +164,8 @@ export default defineType({
     // Resepsi
     defineField({
       name: 'resepsiDate',
-      title: 'Tanggal & Jam Resepsi',
+      title: 'Waktu Resepsi',
       type: 'datetime',
-      group: 'acara',
-    }),
-    defineField({
-      name: 'resepsiTimeManual',
-      title: 'Jam Resepsi Manual (Opsional)',
-      type: 'string',
-      placeholder: '11.00 - 13.00 WIB',
       group: 'acara',
     }),
     defineField({
@@ -224,7 +191,7 @@ export default defineType({
     // --- GROUP 4: GALERI & CERITA ---
     defineField({
       name: 'gallery',
-      title: 'Galeri Foto',
+      title: 'Galeri Foto Prewedding',
       type: 'array',
       of: [{ type: 'image', options: { hotspot: true } }],
       options: { layout: 'grid' },
@@ -253,22 +220,22 @@ export default defineType({
       ]
     }),
 
-    // --- GROUP 5: KADO ---
+    // --- GROUP 5: KADO DIGITAL ---
     defineField({
       name: 'bankAccounts',
-      title: 'Rekening Bank',
+      title: 'Daftar Rekening Bank',
       type: 'array',
+      group: 'kado',
       of: [
         {
           type: 'object',
           fields: [
-            { name: 'bankName', title: 'Bank/E-Wallet', type: 'string' },
-            { name: 'accountNumber', title: 'No. Rekening', type: 'string' },
+            { name: 'bankName', title: 'Nama Bank / E-Wallet', type: 'string' },
+            { name: 'accountNumber', title: 'Nomor Rekening', type: 'string' },
             { name: 'accountName', title: 'Atas Nama', type: 'string' },
           ]
         }
-      ],
-      group: 'kado',
+      ]
     }),
     defineField({
       name: 'giftAddress',
@@ -278,21 +245,22 @@ export default defineType({
     }),
   ],
 
-  // --- PREVIEW DI DASHBOARD ---
   preview: {
     select: {
       pria: 'priaNickname',
       wanita: 'wanitaNickname',
-      foto: 'coverImage', // Pakai cover sebagai thumbnail
+      foto: 'priaFoto', // Kita pakai foto pria sebagai thumbnail
       slug: 'slug.current'
     },
     prepare(selection) {
       const { pria, wanita, foto, slug } = selection
+      // Jika nama belum diisi, pakai placeholder
       const title = pria && wanita ? `${pria} & ${wanita}` : 'Draft Undangan Baru';
+      
       return {
-        title: title,
-        subtitle: slug ? `🔗 /${slug}` : 'Link belum digenerate',
-        media: foto
+        title: title,       // Judul Besar (Contoh: Andi & Siti)
+        subtitle: slug ? `🔗 /${slug}` : 'Belum ada link', // Judul Kecil (Link)
+        media: foto         // Foto Thumbnail
       }
     }
   }

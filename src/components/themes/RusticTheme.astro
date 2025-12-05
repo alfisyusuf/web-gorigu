@@ -1,0 +1,116 @@
+---
+import { urlFor } from "../../utils/image";
+
+const { data } = Astro.props;
+
+// Logic Data (Sama persis dengan SimpleTheme)
+const isPriaFirst = data.nameOrder !== 'wanitaFirst';
+const namaPertama = isPriaFirst ? data.priaNickname : data.wanitaNickname;
+const namaKedua = isPriaFirst ? data.wanitaNickname : data.priaNickname;
+const namaLengkapPertama = isPriaFirst ? data.priaName : data.wanitaName;
+const namaLengkapKedua = isPriaFirst ? data.wanitaName : data.priaName;
+const ortuPertama = isPriaFirst ? data.priaParents : data.wanitaParents;
+const ortuKedua = isPriaFirst ? data.wanitaParents : data.priaParents;
+
+const waktuAkad = data.akadTimeManual || new Date(data.akadDate).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB';
+const waktuResepsi = data.resepsiTimeManual || new Date(data.resepsiDate).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB';
+const tanggalAkad = new Date(data.akadDate).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+// Cover untuk Rustic (Mungkin tidak full overlay, tapi di kotak)
+const coverUrl = data.coverImage ? urlFor(data.coverImage).width(600).url() : '';
+---
+
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding of {namaPertama} & {namaKedua}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; font-family: 'Merriweather', serif; background: #eaddcf; color: #5d4037; }
+        .container { max-width: 460px; margin: 20px auto; background: #fffbf0; border: 10px solid #a1887f; border-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png') 30 round; min-height: 100vh; padding: 20px; box-sizing: border-box; text-align: center; }
+        
+        h1 { font-family: 'Great Vibes', cursive; font-size: 4rem; color: #795548; margin: 10px 0; line-height: 0.9; }
+        h2 { font-family: 'Great Vibes', cursive; font-size: 2.5rem; color: #8d6e63; margin-top: 40px; }
+        .daun { font-size: 2rem; margin: 20px 0; display: block; }
+        
+        .mempelai-box { margin: 30px 0; border-top: 1px solid #d7ccc8; border-bottom: 1px solid #d7ccc8; padding: 20px 0; }
+        .nama-lengkap { font-weight: bold; font-size: 1.2rem; }
+        .ortu { font-size: 0.9rem; font-style: italic; color: #888; }
+        
+        .acara-box { background: #efebe9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #a1887f; }
+        
+        /* Audio Player */
+        #bg-music { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div style="padding: 40px 0;">
+            <p style="text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem;">The Wedding Of</p>
+            {coverUrl && <img src={coverUrl} style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%; border: 4px solid #a1887f; margin: 20px auto;" />}
+            
+            <h1>{namaPertama} <br> <span style="font-size: 2rem;">&</span> <br> {namaKedua}</h1>
+            <p>{tanggalAkad}</p>
+
+            <div class="daun">🌿 🍂 🌿</div>
+            
+            <div style="background: white; padding: 10px; border: 1px solid #ccc; display: inline-block;">
+                <small>Kepada Yth:</small>
+                <h3 id="nama-tamu-rustic" style="margin: 5px 0;">Tamu Undangan</h3>
+            </div>
+        </div>
+
+        <div class="mempelai-box">
+            <p>Atas nama Allah SWT Yang Maha Pengasih lagi Maha Penyayang</p>
+            <br>
+            <div class="nama-lengkap">{namaLengkapPertama}</div>
+            <div class="ortu">{ortuPertama}</div>
+            
+            <div style="font-size: 2rem; margin: 15px 0;">&</div>
+
+            <div class="nama-lengkap">{namaLengkapKedua}</div>
+            <div class="ortu">{ortuKedua}</div>
+        </div>
+
+        <h2>Akad Nikah</h2>
+        <div class="acara-box">
+            <p>📅 {tanggalAkad}</p>
+            <p>⏰ {waktuAkad}</p>
+            <p style="font-weight: bold;">{data.akadPlace}</p>
+        </div>
+
+        <h2>Resepsi</h2>
+        <div class="acara-box">
+            <p>📅 {tanggalAkad}</p>
+            <p>⏰ {waktuResepsi}</p>
+            <p style="font-weight: bold;">{data.resepsiPlace}</p>
+        </div>
+
+        {data.gallery && (
+            <div>
+                <h2>Galeri</h2>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+                {data.gallery.map((img: any) => (
+                    <img src={urlFor(img).width(150).height(150).url()} style="border: 3px solid white; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);" />
+                ))}
+                </div>
+            </div>
+        )}
+
+        <br><br>
+        <p>Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu berkenan hadir.</p>
+        
+        <audio autoplay loop id="bg-music">
+            <source src={`/music/${data.music || 'lagu1.mp3'}`} type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script is:inline>
+        const params = new URLSearchParams(window.location.search);
+        const tamu = params.get('tamu');
+        if(tamu) document.getElementById('nama-tamu-rustic').innerText = tamu;
+    </script>
+</body>
+</html>
