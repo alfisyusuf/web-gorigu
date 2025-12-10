@@ -3,16 +3,43 @@ import { urlFor } from "../../utils/image";
 
 const { data } = Astro.props;
 
-// Logic Data
+// Logic Data: Menentukan Urutan Judul
 const isPriaFirst = data.nameOrder !== 'wanitaFirst';
 const namaPertama = isPriaFirst ? data.priaNickname : data.wanitaNickname;
 const namaKedua = isPriaFirst ? data.wanitaNickname : data.priaNickname;
 const tanggalAkad = new Date(data.akadDate).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-// Ambil URL Gambar
+// Ambil URL Gambar Cover
 const coverUrl = data.coverImage 
   ? urlFor(data.coverImage).width(800).height(1200).url() 
   : 'https://placehold.co/800x1200/333/fff?text=Upload+Cover';
+
+// --- LOGIKA SWAPPING (TUKAR POSISI) ---
+
+// 1. Siapkan URL Foto
+const priaFotoUrl = data.priaFoto ? urlFor(data.priaFoto).width(400).height(400).url() : 'https://placehold.co/400';
+const wanitaFotoUrl = data.wanitaFoto ? urlFor(data.wanitaFoto).width(400).height(400).url() : 'https://placehold.co/400';
+
+// 2. Bungkus Data Pria & Wanita jadi Object
+const groomData = {
+    name: data.priaName,
+    parents: data.priaParents,
+    ig: data.priaIg,
+    foto: priaFotoUrl,
+    label: 'Putra dari' // Label statis
+};
+
+const brideData = {
+    name: data.wanitaName,
+    parents: data.wanitaParents,
+    ig: data.wanitaIg,
+    foto: wanitaFotoUrl,
+    label: 'Putri dari' // Label statis
+};
+
+// 3. Tentukan siapa yang render duluan (First & Second)
+const first = isPriaFirst ? groomData : brideData;
+const second = isPriaFirst ? brideData : groomData;
 
 const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${coverUrl}');`;
 ---
@@ -127,16 +154,16 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.6), rgba
                 <div class="couple-wrapper">
                     <div class="mempelai-card">
                         <img 
-                            src={data.priaFoto ? urlFor(data.priaFoto).width(400).height(400).url() : 'https://placehold.co/400'} 
-                            alt={data.priaName} 
+                            src={first.foto} 
+                            alt={first.name} 
                             class="mempelai-img"
                         />
-                        <div class="mempelai-name">{data.priaName}</div>
-                        <div class="ortu-name">Putra dari {data.priaParents}</div>
+                        <div class="mempelai-name">{first.name}</div>
+                        <div class="ortu-name">{first.label} {first.parents}</div>
                         
-                        {data.priaIg && (
-                            <a href={`https://instagram.com/${data.priaIg}`} target="_blank" class="ig-link">
-                                @{data.priaIg}
+                        {first.ig && (
+                            <a href={`https://instagram.com/${first.ig}`} target="_blank" class="ig-link">
+                                @{first.ig}
                             </a>
                         )}
                     </div>
@@ -145,16 +172,16 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.6), rgba
 
                     <div class="mempelai-card">
                         <img 
-                            src={data.wanitaFoto ? urlFor(data.wanitaFoto).width(400).height(400).url() : 'https://placehold.co/400'} 
-                            alt={data.wanitaName} 
+                            src={second.foto} 
+                            alt={second.name} 
                             class="mempelai-img"
                         />
-                        <div class="mempelai-name">{data.wanitaName}</div>
-                        <div class="ortu-name">Putri dari {data.wanitaParents}</div>
+                        <div class="mempelai-name">{second.name}</div>
+                        <div class="ortu-name">{second.label} {second.parents}</div>
                         
-                        {data.wanitaIg && (
-                            <a href={`https://instagram.com/${data.wanitaIg}`} target="_blank" class="ig-link">
-                                @{data.wanitaIg}
+                        {second.ig && (
+                            <a href={`https://instagram.com/${second.ig}`} target="_blank" class="ig-link">
+                                @{second.ig}
                             </a>
                         )}
                     </div>
