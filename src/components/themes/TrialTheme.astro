@@ -100,6 +100,51 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.6), rgba
         .bank-card { background: white; padding: 20px; border-radius: 10px; margin: 15px auto; max-width: 400px; border: 1px solid #ddd; display: flex; flex-direction: column; align-items: center; }
         .rek-number { font-size: 1.3rem; font-weight: bold; margin: 10px 0; letter-spacing: 1px; font-family: monospace; }
         .btn-copy { background: none; border: 1px solid #888; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; margin-top: 5px; }
+        /* Love Story (Timeline) */
+        .story-section { background-color: #fff; }
+        .timeline { position: relative; max-width: 600px; margin: 30px auto 0; padding-left: 20px; border-left: 2px solid #eee; }
+        
+        .story-item { margin-bottom: 40px; position: relative; padding-left: 30px; text-align: left; }
+        
+        /* Titik bulat di garis timeline */
+        .story-item::before { 
+            content: ''; 
+            position: absolute; 
+            left: -11px; /* Agar pas di tengah garis */
+            top: 5px; 
+            width: 16px; 
+            height: 16px; 
+            background: #333; 
+            border-radius: 50%; 
+            border: 4px solid #fff; 
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        
+        .story-year { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 1.5rem; 
+            color: #333; 
+            font-weight: bold; 
+            line-height: 1;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .story-box { 
+            background: #fdfdfd; 
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid #eee; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        
+        .story-img { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            margin-top: 15px; 
+        }
 
         @media (min-width: 768px) {
             .couple-wrapper { flex-direction: row; justify-content: center; align-items: flex-start; }
@@ -249,6 +294,35 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.6), rgba
                             <a href={data.videoLink} target="_blank" style="text-decoration: underline;">Tonton Video Wedding</a>
                         </div>
                     )}
+                </div>
+            </section>
+        )}
+
+        {data.loveStory && data.loveStory.length > 0 && (
+            <section class="story-section" id="lovestory">
+                <div class="container">
+                    <h2>Kisah Cinta</h2>
+                    <p>Perjalanan cinta kami hingga saat ini.</p>
+                    
+                    <div class="timeline">
+                        {data.loveStory.map((item: any) => (
+                            <div class="story-item">
+                                <span class="story-year">{item.year}</span>
+                                <div class="story-box">
+                                    <p style="margin: 0; color: #555;">{item.story}</p>
+                                    
+                                    {item.image && (
+                                        <img 
+                                            src={urlFor(item.image).width(500).height(350).url()} 
+                                            class="story-img" 
+                                            alt={`Story ${item.year}`} 
+                                            loading="lazy"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
         )}
