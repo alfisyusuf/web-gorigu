@@ -8,10 +8,7 @@ const isPriaFirst = data.nameOrder !== 'wanitaFirst';
 const namaPertama = isPriaFirst ? data.priaNickname : data.wanitaNickname;
 const namaKedua = isPriaFirst ? data.wanitaNickname : data.priaNickname;
 const tanggalAkad = new Date(data.akadDate).toLocaleDateString('id-ID', { 
-  weekday: 'long', 
-  day: 'numeric', 
-  month: 'long', 
-  year: 'numeric' 
+  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
 });
 
 // Ambil URL Gambar
@@ -19,13 +16,37 @@ const coverUrl = data.coverImage
   ? urlFor(data.coverImage).width(1200).height(1600).quality(90).url() 
   : 'https://placehold.co/800x1200/4a1e3d/fff?text=Wedding+Invitation';
 
-const priaFotoUrl = data.priaFoto 
+// --- LOGIKA BARU DIMULAI DI SINI ---
+const priaFoto = data.priaFoto 
   ? urlFor(data.priaFoto).width(400).height(500).quality(90).url()
   : 'https://placehold.co/400x500/4a1e3d/fff?text=Groom';
   
-const wanitaFotoUrl = data.wanitaFoto 
+const wanitaFoto = data.wanitaFoto 
   ? urlFor(data.wanitaFoto).width(400).height(500).quality(90).url()
   : 'https://placehold.co/400x500/4a1e3d/fff?text=Bride';
+
+// Bungkus data menjadi Object agar mudah ditukar
+const groomData = {
+    name: data.priaName,
+    nickname: data.priaNickname,
+    parents: data.priaParents,
+    ig: data.priaIg,
+    foto: priaFoto,
+    label: 'Putra dari' // Label statis
+};
+
+const brideData = {
+    name: data.wanitaName,
+    nickname: data.wanitaNickname,
+    parents: data.wanitaParents,
+    ig: data.wanitaIg,
+    foto: wanitaFoto,
+    label: 'Putri dari' // Label statis
+};
+
+// Tentukan siapa yang render duluan (kiri/atas)
+const first = isPriaFirst ? groomData : brideData;
+const second = isPriaFirst ? brideData : groomData;
 
 const backgroundStyle = `background: linear-gradient(rgba(74, 30, 61, 0.85), rgba(74, 30, 61, 0.7)), url('${coverUrl}');`;
 ---
@@ -939,37 +960,34 @@ const backgroundStyle = `background: linear-gradient(rgba(74, 30, 61, 0.85), rgb
                 </p>
                 
                 <div class="couple-wrapper">
-                    <!-- Groom -->
                     <div class="mempelai-card">
                         <div class="photo-frame">
-                            <img src={priaFotoUrl} alt={data.priaName} class="mempelai-img" loading="lazy" />
+                            <img src={first.foto} alt={first.name} class="mempelai-img" loading="lazy" />
                         </div>
-                        <h3 class="mempelai-name">{data.priaName}</h3>
-                        <div class="mempelai-nickname">{data.priaNickname}</div>
-                        <div class="ortu-name">Putra dari<br/>{data.priaParents}</div>
+                        <h3 class="mempelai-name">{first.name}</h3>
+                        <div class="mempelai-nickname">{first.nickname}</div>
+                        <div class="ortu-name">{first.label}<br/>{first.parents}</div>
                         
-                        {data.priaIg && (
-                            <a href={`https://instagram.com/${data.priaIg}`} target="_blank" class="ig-link">
-                                <i class="fab fa-instagram"></i> @{data.priaIg}
+                        {first.ig && (
+                            <a href={`https://instagram.com/${first.ig}`} target="_blank" class="ig-link">
+                                <i class="fab fa-instagram"></i> @{first.ig}
                             </a>
                         )}
                     </div>
                     
-                    <!-- Divider -->
                     <div class="divider">&</div>
                     
-                    <!-- Bride -->
                     <div class="mempelai-card">
                         <div class="photo-frame">
-                            <img src={wanitaFotoUrl} alt={data.wanitaName} class="mempelai-img" loading="lazy" />
+                            <img src={second.foto} alt={second.name} class="mempelai-img" loading="lazy" />
                         </div>
-                        <h3 class="mempelai-name">{data.wanitaName}</h3>
-                        <div class="mempelai-nickname">{data.wanitaNickname}</div>
-                        <div class="ortu-name">Putri dari<br/>{data.wanitaParents}</div>
+                        <h3 class="mempelai-name">{second.name}</h3>
+                        <div class="mempelai-nickname">{second.nickname}</div>
+                        <div class="ortu-name">{second.label}<br/>{second.parents}</div>
                         
-                        {data.wanitaIg && (
-                            <a href={`https://instagram.com/${data.wanitaIg}`} target="_blank" class="ig-link">
-                                <i class="fab fa-instagram"></i> @{data.wanitaIg}
+                        {second.ig && (
+                            <a href={`https://instagram.com/${second.ig}`} target="_blank" class="ig-link">
+                                <i class="fab fa-instagram"></i> @{second.ig}
                             </a>
                         )}
                     </div>
