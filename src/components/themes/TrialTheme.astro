@@ -36,7 +36,6 @@ const brideData = {
     label: 'Putri dari' 
 };
 
-// Tentukan siapa First & Second
 const first = isPriaFirst ? groomData : brideData;
 const second = isPriaFirst ? brideData : groomData;
 
@@ -54,17 +53,23 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
     <style>
         /* RESET & BASE */
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Poppins', sans-serif; background-color: #f5f5f5; color: #333; overflow: hidden; }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background-color: #222; color: #333; overflow: hidden; /* Body selalu hidden, scroll diurus app-container */ }
 
         /* SCROLL SNAP CONTAINER */
         .app-container {
             height: 100vh;
             height: 100dvh;
             width: 100%;
-            overflow-y: scroll;
+            overflow-y: hidden; /* DEFAULT: TERKUNCI (Tidak bisa scroll) */
             scroll-snap-type: y mandatory;
             scroll-behavior: smooth;
             position: relative;
+            background: #fff;
+        }
+
+        /* Class untuk membuka kunci scroll */
+        .app-container.unlocked {
+            overflow-y: scroll;
         }
 
         /* SECTION CONFIG */
@@ -77,7 +82,7 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px 20px 80px 20px; /* Padding bawah lebih besar agar konten tidak tertutup nav */
+            padding: 20px 20px 80px 20px; 
             position: relative;
             background: white;
             text-align: center;
@@ -91,37 +96,37 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
 
         .container { max-width: 500px; width: 100%; }
 
-        /* TYPOGRAPHY & ELEMENTS */
+        /* TYPOGRAPHY */
         h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin: 0; line-height: 1.2; }
         h2 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 20px; color: inherit; }
         p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px; }
 
-        .btn-open { margin-top: 30px; background: white; color: #333; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 10; }
-        .countdown-box { display: flex; gap: 10px; margin-top: 20px; justify-content: center; }
-        .cd-item { background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 8px; min-width: 60px; }
-        .cd-num { font-size: 1.2rem; font-weight: bold; display: block; }
-        .cd-label { font-size: 0.6rem; text-transform: uppercase; }
+        /* BUTTONS */
+        .btn-open { margin-top: 30px; background: white; color: #333; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 10; transition: all 0.5s; }
+        
+        /* COUNTDOWN */
+        .countdown-box { display: flex; gap: 8px; margin-top: 20px; justify-content: center; }
+        .cd-item { background: rgba(0,0,0,0.5); padding: 8px 10px; border-radius: 8px; min-width: 55px; }
+        .cd-num { font-size: 1.1rem; font-weight: bold; display: block; }
+        .cd-label { font-size: 0.55rem; text-transform: uppercase; }
 
+        /* CARD STYLES */
         .mempelai-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #ddd; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .ig-link { background: #eee; padding: 5px 15px; border-radius: 20px; text-decoration: none; color: #333; font-size: 0.8rem; display: inline-block; margin-top: 10px; }
-        
         .event-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; border: 1px solid #eee; }
         .btn-maps { background: #333; color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; display: inline-block; margin-top: 20px; font-size: 0.9rem; }
-
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; height: 60vh; overflow-y: auto; padding-right: 5px; }
         .gallery-img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; }
-
         .story-scroll { height: 60vh; overflow-y: auto; width: 100%; padding: 0 10px; text-align: left; }
         .story-item { border-left: 2px solid #ddd; padding-left: 20px; margin-bottom: 30px; position: relative; }
         .story-item::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; background: #333; border-radius: 50%; }
         .story-year { font-weight: bold; font-size: 1.2rem; font-family: 'Playfair Display'; display: block; margin-bottom: 5px; }
 
-        /* GIFT STYLES */
+        /* GIFT */
         .gift-scroll { height: 60vh; overflow-y: auto; width: 100%; padding: 5px; }
         .bank-card { background: #f9f9f9; padding: 20px; border-radius: 12px; border: 1px dashed #ccc; margin-bottom: 15px; }
         .rek-number { font-family: monospace; font-size: 1.2rem; font-weight: bold; margin: 5px 0; display: block; }
         .btn-copy { background: none; border: 1px solid #888; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; }
-        
         .address-card { background: #fffbe6; padding: 20px; border-radius: 12px; border: 1px solid #e6db74; margin-top: 20px; color: #555; font-size: 0.9rem; }
 
         /* NAVIGATION BAR */
@@ -132,12 +137,12 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
             transform: translateX(-50%);
             width: 90%;
             max-width: 400px;
-            background: rgba(255, 255, 255, 0.95); /* Sedikit lebih solid */
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 50px;
             padding: 10px 15px;
             display: flex;
-            gap: 20px; /* Jarak antar item */
+            gap: 20px;
             overflow-x: auto;
             box-shadow: 0 5px 25px rgba(0,0,0,0.15);
             z-index: 100;
@@ -146,7 +151,6 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
             pointer-events: none;
             transition: opacity 0.5s;
             border: 1px solid rgba(0,0,0,0.05);
-            scroll-behavior: smooth; /* Agar nav geraknya halus */
         }
         .bottom-nav::-webkit-scrollbar { display: none; }
         
@@ -160,22 +164,38 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
             color: #aaa;
             font-size: 0.7rem;
             transition: all 0.3s;
-            white-space: nowrap; /* Teks tidak turun baris */
-            flex-shrink: 0; /* Item tidak menyusut */
+            white-space: nowrap;
+            flex-shrink: 0;
+            cursor: pointer; /* Penting untuk interaksi */
         }
         .nav-item i { font-size: 1.2rem; margin-bottom: 4px; }
-        
-        /* State Active untuk Navigasi */
         .nav-item.active { color: #333; transform: scale(1.1); font-weight: bold; }
 
-        /* 1. COVER STYLE */
-        #cover {
-            background-size: cover;
-            background-position: center;
-            color: white;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            padding-bottom: 20px; /* Cover tidak butuh padding bawah besar */
+        /* MUSIC TOGGLE FLOATING */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: 1px solid #eee;
+            opacity: 0; /* Hidden di awal */
+            transition: opacity 0.5s;
+            pointer-events: none;
         }
+        .music-icon-spin { animation: spin 3s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        #cover { padding-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -191,6 +211,7 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
                 <div class="cd-item"><span class="cd-num" id="d">0</span><span class="cd-label">Hari</span></div>
                 <div class="cd-item"><span class="cd-num" id="h">0</span><span class="cd-label">Jam</span></div>
                 <div class="cd-item"><span class="cd-num" id="m">0</span><span class="cd-label">Menit</span></div>
+                <div class="cd-item"><span class="cd-num" id="s">0</span><span class="cd-label">Detik</span></div>
             </div>
 
             <div style="margin-top: 30px; background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); padding: 15px; border-radius: 12px; width: 80%; max-width: 400px;">
@@ -316,7 +337,6 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
                         </div>
                     ))}
 
-                    {/* ALAMAT FISIK DITAMBAHKAN DISINI */}
                     {data.giftAddress && (
                         <div class="address-card">
                             <i class="fas fa-box-open" style="font-size: 1.5rem; margin-bottom: 10px; color: #d4af37;"></i>
@@ -339,18 +359,26 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
             </div>
         </section>
 
-    </div> <nav class="bottom-nav" id="navbar">
-        <a href="#cover" class="nav-item"><i class="fas fa-home"></i>Home</a>
-        <a href="#ayat" class="nav-item"><i class="fas fa-book-open"></i>Ayat</a>
+    </div>
+
+    <div class="music-toggle" id="music-btn">
+        <i class="fas fa-music"></i>
+    </div>
+
+    <nav class="bottom-nav" id="navbar">
+        <div class="nav-item" onclick="scrollToSection('cover')"><i class="fas fa-home"></i>Home</div>
+        <div class="nav-item" onclick="scrollToSection('ayat')"><i class="fas fa-book-open"></i>Ayat</div>
         
-        <a href="#mempelai1" class="nav-item"><i class="fas fa-user"></i>{first.nickname}</a>
-        <a href="#mempelai2" class="nav-item"><i class="fas fa-user"></i>{second.nickname}</a>
+        <div class="nav-item" onclick="scrollToSection('mempelai1')"><i class="fas fa-user"></i>{first.nickname}</div>
+        <div class="nav-item" onclick="scrollToSection('mempelai2')"><i class="fas fa-user"></i>{second.nickname}</div>
         
-        <a href="#akad" class="nav-item"><i class="fas fa-ring"></i>Akad</a>
-        {data.resepsiDate && <a href="#resepsi" class="nav-item"><i class="fas fa-glass-cheers"></i>Resepsi</a>}
-        {data.gallery && <a href="#galeri" class="nav-item"><i class="fas fa-images"></i>Galeri</a>}
-        {data.loveStory && <a href="#story" class="nav-item"><i class="fas fa-heart"></i>Story</a>}
-        {data.bankAccounts && <a href="#gift" class="nav-item"><i class="fas fa-gift"></i>Gift</a>}
+        <div class="nav-item" onclick="scrollToSection('akad')"><i class="fas fa-ring"></i>Akad</div>
+        {data.resepsiDate && <div class="nav-item" onclick="scrollToSection('resepsi')"><i class="fas fa-glass-cheers"></i>Resepsi</div>}
+        {data.gallery && <div class="nav-item" onclick="scrollToSection('galeri')"><i class="fas fa-images"></i>Galeri</div>}
+        {data.loveStory && <div class="nav-item" onclick="scrollToSection('story')"><i class="fas fa-heart"></i>Story</div>}
+        {data.bankAccounts && <div class="nav-item" onclick="scrollToSection('gift')"><i class="fas fa-gift"></i>Gift</div>}
+        
+        <div class="nav-item" onclick="closeInvitation()" style="color: #ff4444;"><i class="fas fa-times-circle"></i>Tutup</div>
     </nav>
 
     <audio id="bg-music" loop preload="auto">
@@ -358,71 +386,128 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.5), rgba
     </audio>
 
     <script is:inline define:vars={{ targetDate: data.akadDate }}>
-        // Logic Nama Tamu
+        // VARIABLE SETUP
         const params = new URLSearchParams(window.location.search);
         const tamu = params.get('tamu');
         if(tamu) document.getElementById('nama-tamu').innerText = tamu;
 
-        // --- Logic Buka Undangan ---
+        const app = document.getElementById('app');
         const btnOpen = document.getElementById('tombol-buka');
         const navbar = document.getElementById('navbar');
+        const musicBtn = document.getElementById('music-btn');
         const audio = document.getElementById('bg-music');
-        const app = document.getElementById('app');
+        let isMusicPlaying = false;
 
+        // --- FUNGSI SCROLL AMAN (Mencegah Jump) ---
+        // Kita menggunakan method khusus ini daripada <a href="#id">
+        window.scrollToSection = function(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                // Scroll container, bukan window
+                app.scrollTo({
+                    top: el.offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // --- LOGIKA BUKA UNDANGAN ---
         btnOpen.addEventListener('click', () => {
-            document.getElementById('ayat').scrollIntoView({ behavior: 'smooth' });
-            if(audio) audio.play().catch(e => console.log(e));
+            // 1. Buka Kunci Scroll
+            app.classList.add('unlocked');
+            
+            // 2. Scroll ke Ayat
+            scrollToSection('ayat');
+            
+            // 3. Mainkan Musik
+            if(audio) {
+                audio.play()
+                .then(() => {
+                    isMusicPlaying = true;
+                    musicBtn.querySelector('i').classList.add('music-icon-spin');
+                })
+                .catch(e => console.log(e));
+            }
+
+            // 4. UI Updates
+            btnOpen.style.display = 'none'; // Sembunyikan tombol
             navbar.style.opacity = '1';
             navbar.style.pointerEvents = 'auto';
+            musicBtn.style.opacity = '1';
+            musicBtn.style.pointerEvents = 'auto';
         });
 
-        // --- Logic Auto Scroll Navbar (Sync) ---
-        // Kita gunakan Intersection Observer untuk memantau section mana yang aktif
-        const observerOptions = {
-            root: app,
-            threshold: 0.5 // Aktif jika 50% section terlihat
-        };
+        // --- LOGIKA TUTUP UNDANGAN ---
+        window.closeInvitation = function() {
+            // Scroll ke atas
+            app.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Tunggu scroll selesai baru kunci (kasar tapi efektif)
+            setTimeout(() => {
+                app.classList.remove('unlocked'); // Kunci scroll
+                btnOpen.style.display = 'flex'; // Munculkan tombol lagi
+                navbar.style.opacity = '0';
+                navbar.style.pointerEvents = 'none';
+                musicBtn.style.opacity = '0';
+                musicBtn.style.pointerEvents = 'none';
+                
+                // Stop Musik
+                if(audio) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    isMusicPlaying = false;
+                    musicBtn.querySelector('i').classList.remove('music-icon-spin');
+                }
+            }, 800);
+        }
 
+        // --- LOGIKA MUSIK ON/OFF ---
+        musicBtn.addEventListener('click', () => {
+            if(isMusicPlaying) {
+                audio.pause();
+                musicBtn.querySelector('i').classList.remove('music-icon-spin');
+                musicBtn.querySelector('i').className = "fas fa-volume-mute";
+            } else {
+                audio.play();
+                musicBtn.querySelector('i').className = "fas fa-music music-icon-spin";
+            }
+            isMusicPlaying = !isMusicPlaying;
+        });
+
+        // --- LOGIKA INTERSECTION OBSERVER (Auto Nav Scroll) ---
+        const observerOptions = { root: app, threshold: 0.5 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // 1. Cari link nav yang sesuai dengan ID section
                     const id = entry.target.id;
-                    const activeLink = document.querySelector(`.nav-item[href="#${id}"]`);
-                    
-                    // 2. Reset semua active class
-                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                    
-                    if (activeLink) {
-                        // 3. Tambahkan class active
-                        activeLink.classList.add('active');
-                        
-                        // 4. AUTO SCROLL NAVBAR (Fitur yang diminta)
-                        // Agar tombol aktif selalu di tengah atau terlihat
-                        activeLink.scrollIntoView({
-                            behavior: 'smooth',
-                            inline: 'center', // Taruh elemen di tengah horizontal
-                            block: 'nearest'
-                        });
-                    }
+                    // Cari tombol nav yang onclick-nya mengandung ID section ini
+                    // Selector ini agak trick, mencari elemen nav-item yang function scrollToSection-nya punya parameter id ini
+                    const navItems = document.querySelectorAll('.nav-item');
+                    navItems.forEach(item => {
+                        item.classList.remove('active');
+                        if(item.getAttribute('onclick') && item.getAttribute('onclick').includes(`'${id}'`)) {
+                            item.classList.add('active');
+                            item.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                        }
+                    });
                 }
             });
         }, observerOptions);
 
-        // Mulai observasi semua section
-        document.querySelectorAll('section').forEach(section => {
-            observer.observe(section);
-        });
+        document.querySelectorAll('section').forEach(sec => observer.observe(sec));
 
-        // Countdown Logic
+        // --- LOGIKA COUNTDOWN (Timezone Fix & Seconds) ---
         const countDownDate = new Date(targetDate).getTime();
+
         setInterval(function() {
             const now = new Date().getTime();
             const distance = countDownDate - now;
+
             if (distance >= 0) {
                 document.getElementById("d").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
                 document.getElementById("h").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 document.getElementById("m").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById("s").innerText = Math.floor((distance % (1000 * 60)) / 1000);
             }
         }, 1000);
     </script>
