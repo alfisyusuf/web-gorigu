@@ -199,7 +199,7 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.6), rgba
                         <p style="font-weight: bold; font-size: 1.1rem;">
                             {new Date(data.akadDate).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                         </p>
-                        <p>🕗 {data.akadTimeManual ? data.akadTimeManual : new Date(data.akadDate).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB'}</p>
+                        <p>🕗 {data.akadTimeManual ? data.akadTimeManual : new Date(data.akadDate).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit', timeZone: 'Asia/Jakarta'}) + ' WIB'}</p>
                         
                         <p style="margin-top: 15px;"><strong>{data.akadPlace}</strong></p>
                         <p style="font-size: 0.85rem;">{data.akadAddress}</p>
@@ -215,7 +215,7 @@ const backgroundStyle = `background-image: linear-gradient(rgba(0,0,0,0.6), rgba
                         <p style="font-weight: bold; font-size: 1.1rem;">
                             {new Date(data.resepsiDate).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                         </p>
-                        <p>🕚 {data.resepsiTimeManual ? data.resepsiTimeManual : new Date(data.resepsiDate).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) + ' WIB'}</p>
+                        <p>🕚 {data.resepsiTimeManual ? data.resepsiTimeManual : new Date(data.resepsiDate).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit', timeZone: 'Asia/Jakarta'}) + ' WIB'}</p>
                         
                         <p style="margin-top: 15px;"><strong>{data.resepsiPlace}</strong></p>
                         <p style="font-size: 0.85rem;">{data.resepsiAddress}</p>
